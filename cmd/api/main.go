@@ -19,6 +19,7 @@ func main() {
 		log.Fatalf("open database: %v", err)
 	}
 	// added new change
+	// new change need to be create a pull request to be applied
 	defer db.Close()
 
 	categoryDB := database.NewCategory(db)
