@@ -20,6 +20,7 @@ func main() {
 	}
 	// added new change
 	// new change need to be create a pull request to be applied
+	// agora é o teste real, precisariei criar um PR
 	defer db.Close()
 
 	categoryDB := database.NewCategory(db)
