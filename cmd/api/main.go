@@ -18,6 +18,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("open database: %v", err)
 	}
+	// added new change
 	defer db.Close()
 
 	categoryDB := database.NewCategory(db)
