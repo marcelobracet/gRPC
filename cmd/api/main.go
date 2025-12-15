@@ -20,6 +20,8 @@ func main() {
 	}
 	defer db.Close()
 
+	// agora vou precisar criar um PR.
+
 	categoryDB := database.NewCategory(db)
 	categoryService := services.NewCategory(*categoryDB)
 
