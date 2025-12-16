@@ -436,14 +436,16 @@ const file_proto_course_category_proto_rawDesc = "" +
 	"categories\x18\x01 \x03(\v2\f.pb.CategoryR\n" +
 	"categories\"1\n" +
 	"\x1bListCategoriesByNameRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name2\xf1\x02\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name2\x8a\x04\n" +
 	"\x0fCategoryService\x129\n" +
 	"\x0eCreateCategory\x12\x19.pb.CreateCategoryRequest\x1a\f.pb.Category\x123\n" +
 	"\vGetCategory\x12\x16.pb.GetCategoryRequest\x1a\f.pb.Category\x129\n" +
 	"\x0eUpdateCategory\x12\x19.pb.UpdateCategoryRequest\x1a\f.pb.Category\x129\n" +
 	"\x0eDeleteCategory\x12\x19.pb.DeleteCategoryRequest\x1a\f.pb.Category\x12-\n" +
 	"\x0eListCategories\x12\t.pb.Blank\x1a\x10.pb.CategoryList\x12I\n" +
-	"\x14ListCategoriesByName\x12\x1f.pb.ListCategoriesByNameRequest\x1a\x10.pb.CategoryListB\rZ\vinternal/pbb\x06proto3"
+	"\x14ListCategoriesByName\x12\x1f.pb.ListCategoriesByNameRequest\x1a\x10.pb.CategoryList\x12E\n" +
+	"\x14CreateCategoryStream\x12\x19.pb.CreateCategoryRequest\x1a\x10.pb.CategoryList(\x01\x12P\n" +
+	"!CreateCategoryStreamBidirectional\x12\x19.pb.CreateCategoryRequest\x1a\f.pb.Category(\x010\x01B\rZ\vinternal/pbb\x06proto3"
 
 var (
 	file_proto_course_category_proto_rawDescOnce sync.Once
@@ -476,14 +478,18 @@ var file_proto_course_category_proto_depIdxs = []int32{
 	5, // 4: pb.CategoryService.DeleteCategory:input_type -> pb.DeleteCategoryRequest
 	0, // 5: pb.CategoryService.ListCategories:input_type -> pb.Blank
 	7, // 6: pb.CategoryService.ListCategoriesByName:input_type -> pb.ListCategoriesByNameRequest
-	1, // 7: pb.CategoryService.CreateCategory:output_type -> pb.Category
-	1, // 8: pb.CategoryService.GetCategory:output_type -> pb.Category
-	1, // 9: pb.CategoryService.UpdateCategory:output_type -> pb.Category
-	1, // 10: pb.CategoryService.DeleteCategory:output_type -> pb.Category
-	6, // 11: pb.CategoryService.ListCategories:output_type -> pb.CategoryList
-	6, // 12: pb.CategoryService.ListCategoriesByName:output_type -> pb.CategoryList
-	7, // [7:13] is the sub-list for method output_type
-	1, // [1:7] is the sub-list for method input_type
+	2, // 7: pb.CategoryService.CreateCategoryStream:input_type -> pb.CreateCategoryRequest
+	2, // 8: pb.CategoryService.CreateCategoryStreamBidirectional:input_type -> pb.CreateCategoryRequest
+	1, // 9: pb.CategoryService.CreateCategory:output_type -> pb.Category
+	1, // 10: pb.CategoryService.GetCategory:output_type -> pb.Category
+	1, // 11: pb.CategoryService.UpdateCategory:output_type -> pb.Category
+	1, // 12: pb.CategoryService.DeleteCategory:output_type -> pb.Category
+	6, // 13: pb.CategoryService.ListCategories:output_type -> pb.CategoryList
+	6, // 14: pb.CategoryService.ListCategoriesByName:output_type -> pb.CategoryList
+	6, // 15: pb.CategoryService.CreateCategoryStream:output_type -> pb.CategoryList
+	1, // 16: pb.CategoryService.CreateCategoryStreamBidirectional:output_type -> pb.Category
+	9, // [9:17] is the sub-list for method output_type
+	1, // [1:9] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name

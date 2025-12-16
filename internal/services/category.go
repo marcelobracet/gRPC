@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"io"
 
 	"github.com/google/uuid"
 	"github.com/marcelobracet/grpc/internal/database"
@@ -69,7 +70,7 @@ func NewCategory(categoryDB database.Category) *CategoryService {
 }
 
 func (s *CategoryService) CreateCategory(ctx context.Context, req *pb.CreateCategoryRequest) (*pb.Category, error) {
-	err := s.CategoryDB.CreateCategory(req.Name, req.Description)
+	_, err := s.CategoryDB.CreateCategory(req.Name, req.Description)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -78,4 +79,53 @@ func (s *CategoryService) CreateCategory(ctx context.Context, req *pb.CreateCate
 		Name:        req.Name,
 		Description: req.Description,
 	}, nil
+}
+
+func (c *CategoryService) CreateCategoryStream(stream pb.CategoryService_CreateCategoryStreamServer) error {
+	categories := &pb.CategoryList{}
+
+	for {
+		category, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(categories)
+		}
+
+		if err != nil {
+			return status.Error(codes.Internal, err.Error())
+		}
+
+		categoriesResult, err := c.CategoryDB.CreateCategory(category.Name, category.Description)
+		if err != nil {
+			return status.Error(codes.Internal, err.Error())
+		}
+
+		categories.Categories = append(categories.Categories, categoriesResult)
+	}
+}
+
+func (c *CategoryService) CreateCategoryStreamBidirectional(stream pb.CategoryService_CreateCategoryStreamBidirectionalServer) error {
+	for {
+		category, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+
+		if err != nil {
+			return status.Error(codes.Internal, err.Error())
+		}
+
+		categoryResult, err := c.CategoryDB.CreateCategory(category.Name, category.Description)
+		if err != nil {
+			return err
+		}
+
+		err = stream.Send(&pb.Category{
+			Id:          categoryResult.Id,
+			Name:        categoryResult.Name,
+			Description: categoryResult.Description,
+		})
+		if err != nil {
+			return err
+		}
+	}
 }

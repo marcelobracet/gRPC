@@ -22,13 +22,17 @@ func NewCategory(db *sql.DB) *Category {
 	return &Category{DB: db}
 }
 
-func (c *Category) CreateCategory(name string, description *string) error {
+func (c *Category) CreateCategory(name string, description *string) (*pb.Category, error) {
 	id := uuid.New().String()
 	_, err := c.DB.Exec("INSERT INTO categories (id, name, description) VALUES ($1, $2, $3)", id, name, description)
 	if err != nil {
-		return status.Error(codes.Internal, err.Error())
+		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return nil
+	return &pb.Category{
+		Id:          id,
+		Name:        name,
+		Description: description,
+	}, nil
 }
 
 func (c *Category) ListCategoriesByName(name string) ([]*pb.Category, error) {

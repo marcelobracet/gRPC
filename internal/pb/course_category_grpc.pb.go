@@ -21,12 +21,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CategoryService_CreateCategory_FullMethodName       = "/pb.CategoryService/CreateCategory"
-	CategoryService_GetCategory_FullMethodName          = "/pb.CategoryService/GetCategory"
-	CategoryService_UpdateCategory_FullMethodName       = "/pb.CategoryService/UpdateCategory"
-	CategoryService_DeleteCategory_FullMethodName       = "/pb.CategoryService/DeleteCategory"
-	CategoryService_ListCategories_FullMethodName       = "/pb.CategoryService/ListCategories"
-	CategoryService_ListCategoriesByName_FullMethodName = "/pb.CategoryService/ListCategoriesByName"
+	CategoryService_CreateCategory_FullMethodName                    = "/pb.CategoryService/CreateCategory"
+	CategoryService_GetCategory_FullMethodName                       = "/pb.CategoryService/GetCategory"
+	CategoryService_UpdateCategory_FullMethodName                    = "/pb.CategoryService/UpdateCategory"
+	CategoryService_DeleteCategory_FullMethodName                    = "/pb.CategoryService/DeleteCategory"
+	CategoryService_ListCategories_FullMethodName                    = "/pb.CategoryService/ListCategories"
+	CategoryService_ListCategoriesByName_FullMethodName              = "/pb.CategoryService/ListCategoriesByName"
+	CategoryService_CreateCategoryStream_FullMethodName              = "/pb.CategoryService/CreateCategoryStream"
+	CategoryService_CreateCategoryStreamBidirectional_FullMethodName = "/pb.CategoryService/CreateCategoryStreamBidirectional"
 )
 
 // CategoryServiceClient is the client API for CategoryService service.
@@ -39,6 +41,8 @@ type CategoryServiceClient interface {
 	DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*Category, error)
 	ListCategories(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*CategoryList, error)
 	ListCategoriesByName(ctx context.Context, in *ListCategoriesByNameRequest, opts ...grpc.CallOption) (*CategoryList, error)
+	CreateCategoryStream(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreateCategoryRequest, CategoryList], error)
+	CreateCategoryStreamBidirectional(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CreateCategoryRequest, Category], error)
 }
 
 type categoryServiceClient struct {
@@ -109,6 +113,32 @@ func (c *categoryServiceClient) ListCategoriesByName(ctx context.Context, in *Li
 	return out, nil
 }
 
+func (c *categoryServiceClient) CreateCategoryStream(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[CreateCategoryRequest, CategoryList], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &CategoryService_ServiceDesc.Streams[0], CategoryService_CreateCategoryStream_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[CreateCategoryRequest, CategoryList]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CategoryService_CreateCategoryStreamClient = grpc.ClientStreamingClient[CreateCategoryRequest, CategoryList]
+
+func (c *categoryServiceClient) CreateCategoryStreamBidirectional(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CreateCategoryRequest, Category], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &CategoryService_ServiceDesc.Streams[1], CategoryService_CreateCategoryStreamBidirectional_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[CreateCategoryRequest, Category]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CategoryService_CreateCategoryStreamBidirectionalClient = grpc.BidiStreamingClient[CreateCategoryRequest, Category]
+
 // CategoryServiceServer is the server API for CategoryService service.
 // All implementations must embed UnimplementedCategoryServiceServer
 // for forward compatibility.
@@ -119,6 +149,8 @@ type CategoryServiceServer interface {
 	DeleteCategory(context.Context, *DeleteCategoryRequest) (*Category, error)
 	ListCategories(context.Context, *Blank) (*CategoryList, error)
 	ListCategoriesByName(context.Context, *ListCategoriesByNameRequest) (*CategoryList, error)
+	CreateCategoryStream(grpc.ClientStreamingServer[CreateCategoryRequest, CategoryList]) error
+	CreateCategoryStreamBidirectional(grpc.BidiStreamingServer[CreateCategoryRequest, Category]) error
 	mustEmbedUnimplementedCategoryServiceServer()
 }
 
@@ -146,6 +178,12 @@ func (UnimplementedCategoryServiceServer) ListCategories(context.Context, *Blank
 }
 func (UnimplementedCategoryServiceServer) ListCategoriesByName(context.Context, *ListCategoriesByNameRequest) (*CategoryList, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCategoriesByName not implemented")
+}
+func (UnimplementedCategoryServiceServer) CreateCategoryStream(grpc.ClientStreamingServer[CreateCategoryRequest, CategoryList]) error {
+	return status.Error(codes.Unimplemented, "method CreateCategoryStream not implemented")
+}
+func (UnimplementedCategoryServiceServer) CreateCategoryStreamBidirectional(grpc.BidiStreamingServer[CreateCategoryRequest, Category]) error {
+	return status.Error(codes.Unimplemented, "method CreateCategoryStreamBidirectional not implemented")
 }
 func (UnimplementedCategoryServiceServer) mustEmbedUnimplementedCategoryServiceServer() {}
 func (UnimplementedCategoryServiceServer) testEmbeddedByValue()                         {}
@@ -276,6 +314,20 @@ func _CategoryService_ListCategoriesByName_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CategoryService_CreateCategoryStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CategoryServiceServer).CreateCategoryStream(&grpc.GenericServerStream[CreateCategoryRequest, CategoryList]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CategoryService_CreateCategoryStreamServer = grpc.ClientStreamingServer[CreateCategoryRequest, CategoryList]
+
+func _CategoryService_CreateCategoryStreamBidirectional_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CategoryServiceServer).CreateCategoryStreamBidirectional(&grpc.GenericServerStream[CreateCategoryRequest, Category]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CategoryService_CreateCategoryStreamBidirectionalServer = grpc.BidiStreamingServer[CreateCategoryRequest, Category]
+
 // CategoryService_ServiceDesc is the grpc.ServiceDesc for CategoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -308,6 +360,18 @@ var CategoryService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CategoryService_ListCategoriesByName_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "CreateCategoryStream",
+			Handler:       _CategoryService_CreateCategoryStream_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "CreateCategoryStreamBidirectional",
+			Handler:       _CategoryService_CreateCategoryStreamBidirectional_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "proto/course_category.proto",
 }

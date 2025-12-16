@@ -45,4 +45,6 @@ service CategoryService {
     rpc DeleteCategory(DeleteCategoryRequest) returns (Category);
     rpc ListCategories(Blank) returns (CategoryList);
     rpc ListCategoriesByName(ListCategoriesByNameRequest) returns (CategoryList);
+    rpc CreateCategoryStream(stream CreateCategoryRequest) returns (CategoryList);
+    rpc CreateCategoryStreamBidirectional(stream CreateCategoryRequest) returns (stream Category);
 }
