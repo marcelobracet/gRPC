@@ -26,13 +26,23 @@ func (s *CategoryService) GetCategory(context.Context, *pb.GetCategoryRequest) (
 }
 
 // ListCategories implements pb.CategoryServiceServer.
-func (s *CategoryService) ListCategories(ctx context.Context, req *pb.ListCategoriesRequest) (*pb.CategoryList, error) {
+func (s *CategoryService) ListCategories(ctx context.Context, req *pb.Blank) (*pb.CategoryList, error) {
 	rows, err := s.CategoryDB.ListCategories()
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &pb.CategoryList{
 		Categories: rows,
+	}, nil
+}
+
+func (s *CategoryService) ListCategoriesByName(ctx context.Context, req *pb.ListCategoriesByNameRequest) (*pb.CategoryList, error) {
+	categories, err := s.CategoryDB.ListCategoriesByName(req.Name)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	return &pb.CategoryList{
+		Categories: categories,
 	}, nil
 }
 

@@ -31,6 +31,25 @@ func (c *Category) CreateCategory(name string, description *string) error {
 	return nil
 }
 
+func (c *Category) ListCategoriesByName(name string) ([]*pb.Category, error) {
+	rows, err := c.DB.Query("SELECT * FROM categories WHERE name = $1", name)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []*pb.Category
+	for rows.Next() {
+		var category pb.Category
+		err := rows.Scan(&category.Id, &category.Name, &category.Description)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, &category)
+	}
+	return categories, nil
+}
+
 func (c *Category) ListCategories() ([]*pb.Category, error) {
 	rows, err := c.DB.Query("SELECT * FROM categories")
 	if err != nil {
@@ -41,7 +60,7 @@ func (c *Category) ListCategories() ([]*pb.Category, error) {
 	var categories []*pb.Category
 	for rows.Next() {
 		var category pb.Category
-		err := rows.Scan(&category.Id, &category.Name)
+		err := rows.Scan(&category.Id, &category.Name, &category.Description)
 		if err != nil {
 			return nil, err
 		}

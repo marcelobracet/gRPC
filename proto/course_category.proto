@@ -3,6 +3,8 @@ syntax = "proto3";
 package pb;
 option go_package = "internal/pb";
 
+message Blank{}
+
 message Category {
     string id = 1;
     string name = 2;
@@ -28,12 +30,12 @@ message DeleteCategoryRequest {
     string id = 1;
 }
 
-message ListCategoriesRequest {
-    optional string name = 1;
-}
-
 message CategoryList {
     repeated Category categories = 1;
+}
+
+message ListCategoriesByNameRequest {
+    string name = 1;
 }
 
 service CategoryService {
@@ -41,5 +43,6 @@ service CategoryService {
     rpc GetCategory(GetCategoryRequest) returns (Category);
     rpc UpdateCategory(UpdateCategoryRequest) returns (Category);
     rpc DeleteCategory(DeleteCategoryRequest) returns (Category);
-    rpc ListCategories(ListCategoriesRequest) returns (CategoryList);
+    rpc ListCategories(Blank) returns (CategoryList);
+    rpc ListCategoriesByName(ListCategoriesByNameRequest) returns (CategoryList);
 }
