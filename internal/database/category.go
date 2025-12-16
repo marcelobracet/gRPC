@@ -22,13 +22,36 @@ func NewCategory(db *sql.DB) *Category {
 	return &Category{DB: db}
 }
 
-func (c *Category) CreateCategory(name string, description *string) error {
+func (c *Category) CreateCategory(name string, description *string) (*pb.Category, error) {
 	id := uuid.New().String()
 	_, err := c.DB.Exec("INSERT INTO categories (id, name, description) VALUES ($1, $2, $3)", id, name, description)
 	if err != nil {
-		return status.Error(codes.Internal, err.Error())
+		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return nil
+	return &pb.Category{
+		Id:          id,
+		Name:        name,
+		Description: description,
+	}, nil
+}
+
+func (c *Category) ListCategoriesByName(name string) ([]*pb.Category, error) {
+	rows, err := c.DB.Query("SELECT * FROM categories WHERE name = $1", name)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []*pb.Category
+	for rows.Next() {
+		var category pb.Category
+		err := rows.Scan(&category.Id, &category.Name, &category.Description)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, &category)
+	}
+	return categories, nil
 }
 
 func (c *Category) ListCategories() ([]*pb.Category, error) {
@@ -41,7 +64,7 @@ func (c *Category) ListCategories() ([]*pb.Category, error) {
 	var categories []*pb.Category
 	for rows.Next() {
 		var category pb.Category
-		err := rows.Scan(&category.Id, &category.Name)
+		err := rows.Scan(&category.Id, &category.Name, &category.Description)
 		if err != nil {
 			return nil, err
 		}

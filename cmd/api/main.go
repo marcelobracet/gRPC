@@ -23,6 +23,8 @@ func main() {
 	// agora é o teste real, precisariei criar um PR
 	defer db.Close()
 
+	// agora vou precisar criar um PR.
+
 	categoryDB := database.NewCategory(db)
 	categoryService := services.NewCategory(*categoryDB)
 
